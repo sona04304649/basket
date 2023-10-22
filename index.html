@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  #randomWord {
+    font-size: 50px;
+    font-weight: bold;
+    margin-top: 50px;
+    text-align: center;
+  }
+  #countdown {
+    font-size: 20px;
+    text-align: center;
+  }
+  #startStopButton {
+    display: block;
+    width: 50px;
+    height: 50px;
+    margin: 0 auto;
+  }
+  #buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  .percentageButton {
+    width: 50px;
+    height: 50px;
+    margin: 0 10px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  #buttonO {
+    color: red;
+  }
+  #buttonX {
+    color: blue;
+  }
+  #percentageDisplay {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 20px;
+  }
+  #message {
+    text-align: center;
+    font-size: 20px;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+<div id="randomWord"></div>
+<div id="countdown"></div>
+<button onclick="startStop()" id="startStopButton">Start</button>
+<div id="buttons">
+  <button onclick="handleResult(true)" class="percentageButton" id="buttonO">〇</button>
+  <button onclick="handleResult(false)" class="percentageButton" id="buttonX">×</button>
+</div>
+<div id="percentageDisplay"></div>
+<div id="message"></div>
+
+<script>
+  let timer;
+  let isCounting = false;
+  let interval = false;
+  let playCount = 0;
+  let breakCount = 0;
+
+  const words = ["左手フェイダウェイ", "右手フェイダウェイ", "左ステップバック", "右ステップバック", "左手フローター", "右手フローター", "左手スクープ", "右手スクープ", "左手クロスジャブユーロ", "右手クロスジャブユーロ", "左ダブルクラッチ", "右ダブルクラッチ", "左手ロールターン", "右手ロールターン", "左手ギャロップ", "右手ギャロップ"];
+  let timeLeft = 60;
+
+  function displayRandomWord() {
+    const randomIndex = Math.floor(Math.random() * words.length);
+    const word = words[randomIndex];
+    const randomWordElement = document.getElementById('randomWord');
+    randomWordElement.innerText = word;
+    if (word.includes("左")) {
+      randomWordElement.style.color = "blue";
+    } else if (word.includes("右")) {
+      randomWordElement.style.color = "red";
+    } else {
+      randomWordElement.style.color = "black";
+    }
+  }
+
+  function countdown() {
+    if (timeLeft === 0) {
+      if (interval) {
+        timeLeft = 60;
+        interval = false;
+        document.getElementById('randomWord').style.visibility = "visible";
+        document.getElementById('countdown').style.color = "black";
+      } else {
+        timeLeft = 10;
+        interval = true;
+        document.getElementById('randomWord').style.visibility = "hidden";
+        document.getElementById('countdown').style.color = "red";
+      }
+      displayRandomWord();
+    }
+    if (interval) {
+      document.getElementById('countdown').innerText = '休憩中: ' + timeLeft + ' seconds';
+    } else {
+      document.getElementById('countdown').innerText = 'プレイ中: ' + timeLeft + ' seconds';
+    }
+    timeLeft--;
+  }
+
+  function startStop() {
+    const button = document.getElementById('startStopButton');
+    if (!isCounting) {
+      timer = setInterval(countdown, 1000);
+      isCounting = true;
+      button.innerText = "Stop";
+    } else {
+      clearInterval(timer);
+      isCounting = false;
+      button.innerText = "Start";
+    }
+  }
+
+  function handleResult(isPlay) {
+    if (isPlay) {
+      playCount++;
+    } else {
+      breakCount++;
+    }
+    const total = playCount + breakCount;
+    const percentageO = ((playCount / total) * 100).toFixed(2);
+    document.getElementById('buttonO').innerText = `〇`;
+    document.getElementById('percentageDisplay').innerText = `〇ボタンのパーセンテージ: ${percentageO}%`;
+
+    let messageElement = document.getElementById('message');
+    if (percentageO >= 100) {
+      messageElement.innerText = "完璧！";
+      messageElement.style.color = "white";
+      messageElement.style.fontSize = "40px";
+      document.body.style.backgroundColor = "gold";
+      messageElement.classList.add('animate__animated', 'animate__headShake');
+    } else if (percentageO >= 90 && percentageO <= 99) {
+      messageElement.innerText = "お見事！";
+      messageElement.style.color = "silver";
+      document.body.style.backgroundColor = "white";
+      messageElement.classList.remove('animate__animated', 'animate__headShake');
+    } else if (percentageO >= 70 && percentageO <= 89) {
+      messageElement.innerText = "なかなかの腕前！";
+      messageElement.style.color = "orange";
+      document.body.style.backgroundColor = "white";
+      messageElement.classList.remove('animate__animated', 'animate__headShake');
+    } else if (percentageO >= 50 && percentageO <= 69) {
+      messageElement.innerText = "平均以上の実力！";
+      messageElement.style.color = "red";
+      document.body.style.backgroundColor = "white";
+      messageElement.classList.remove('animate__animated', 'animate__headShake');
+    } else if (percentageO >= 30 && percentageO <= 49) {
+      messageElement.innerText = "もう少しガンバれ！";
+      messageElement.style.color = "blue";
+      document.body.style.backgroundColor = "white";
+      messageElement.classList.remove('animate__animated', 'animate__headShake');
+    } else if (percentageO >= 10 && percentageO <= 29) {
+      messageElement.innerText = "もっと練習しよう！";
+      messageElement.style.color = "green";
+      document.body.style.backgroundColor = "white";
+      messageElement.classList.remove('animate__animated', 'animate__headShake');
+    } else {
+      messageElement.innerText = "oh...";
+      messageElement.style.color = "white";
+      document.body.style.backgroundColor = "purple";
+      messageElement.classList.remove('animate__animated', 'animate__headShake');
+    }
+  }
+
+  displayRandomWord();
+</script>
+</body>
+</html>
